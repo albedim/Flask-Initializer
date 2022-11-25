@@ -54,8 +54,7 @@ IF %choice%==create-project GOTO PROJECT
     set /p lowerName=set your service name EX. example:
     BREAK > "../%projectName1%/service/"%name%Service.py"" 100
     echo [DONE] %name%Service.py has been created
-    echo import datetime>> "../%projectName1%/service/"%name%Service.py""
-    echo from flask import jsonify>> "../%projectName1%/service/"%name%Service.py""
+    echo from %projectName1%.utils.Util import Util >> "../%projectName1%/service/"%name%Service.py""
     echo. >> "../%projectName1%/service/"%name%Service.py""
     echo. >> "../%projectName1%/service/"%name%Service.py""
     echo class %name%Service():>> "../%projectName1%/service/"%name%Service.py""
@@ -64,18 +63,6 @@ IF %choice%==create-project GOTO PROJECT
     echo         self.mysql = mysql>> "../%projectName1%/service/"%name%Service.py""
     echo         self.%lowerName%Repository = %lowerName%Repository>> "../%projectName1%/service/"%name%Service.py""
     echo. >> "../%projectName1%/service/"%name%Service.py""
-    echo. >> "../%projectName1%/service/"%name%Service.py""
-    echo     # Creates a json response for the endpoints>> "../%projectName1%/service/"%name%Service.py""
-    echo. >> "../%projectName1%/service/"%name%Service.py""
-    echo     @classmethod>> "../%projectName1%/service/"%name%Service.py""
-    echo     def createResponse(cls, error, code, param):>> "../%projectName1%/service/"%name%Service.py""
-    echo         return jsonify({>> "../%projectName1%/service/"%name%Service.py""
-    echo             "date": str(datetime.datetime.now()),>> "../%projectName1%/service/"%name%Service.py""
-    echo             "error": error,>> "../%projectName1%/service/"%name%Service.py""
-    echo             "status": code,>> "../%projectName1%/service/"%name%Service.py""
-    echo             "param": param,>> "../%projectName1%/service/"%name%Service.py""
-    echo             "url": "/order">> "../%projectName1%/service/"%name%Service.py""
-    echo         })>> "../%projectName1%/service/"%name%Service.py""
     GOTO START
 
 :PROJECT
@@ -97,6 +84,7 @@ IF %choice%==create-project GOTO PROJECT
     echo mysql = SQLAlchemy(app)>> Config.py
 
     cd ..
+    mkdir utils
     mkdir controller
     mkdir model
     cd model
@@ -117,6 +105,44 @@ IF %choice%==create-project GOTO PROJECT
     echo :START>> start.bat
     echo flask run>> start.bat
     echo pause > nul>> start.bat
+
+    cd %projectName%
+    cd utils
+    BREAK > Util.py 100
+    echo import datetime >> Util.py
+    echo from flask import jsonify >> Util.py
+    echo. >> Util.py
+    echo. >> Util.py
+    echo class Util(): >> Util.py
+    echo. >> Util.py
+    echo     RESOURCE_DOESNT_EXIST = "The resource you are trying to get, doesn't exist"
+    echo     NOT_ENOUGH_PERMISSIONS = "You don't have enough permissions to do this"
+    echo     RESOURCE_ALREADY_EXISTS = "The resource you are trying to add, already exists"
+    echo. >> Util.py
+    echo     @classmethod >> Util.py
+    echo     def createList(cls, elements): >> Util.py
+    echo         response = [] >> Util.py
+    echo         for element in elements: >> Util.py
+    echo             response.append(element.toJson()) >> Util.py
+    echo         return jsonify(response) >> Util.py
+    echo. >> Util.py
+    echo     @classmethod >> Util.py
+    echo     def createSuccessResponse(cls, success, param): >> Util.py
+    echo         return jsonify({ >> Util.py
+    echo             "date": str(datetime.now()), >> Util.py
+    echo             "success": success, >> Util.py
+    echo             "param": param, >> Util.py
+    echo             "code": 200 >> Util.py
+    echo         }) >> Util.py
+    echo.
+    echo     @classmethod >> Util.py
+    echo     def createWrongResponse(cls, success, error, code): >> Util.py
+    echo         return jsonify({ >> Util.py
+    echo             "date": str(datetime.now()), >> Util.py
+    echo             "success": success, >> Util.py
+    echo             "error": error, >> Util.py
+    echo             "code": code >> Util.py
+
 
     echo [DONE] The project has been created
     echo RESTART THE .BAT FILE TO CONTINUE
