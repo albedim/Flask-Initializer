@@ -41,9 +41,10 @@ IF %choice%==create-project GOTO PROJECT
     echo from %projectName1%.configuration.Config import mysql>> "../%projectName1%/controller/"%name%Controller.py""
     echo from %projectName1%.model.repository.%name%Repository import %name%Repository>> "../%projectName1%/controller/"%name%Controller.py""
     echo from %projectName1%.service.%name%Service import %name%Service>> "../%projectName1%/controller/"%name%Controller.py""
+    echo from %projectName1%.utils.Util import Util >> "../%projectName1%/utils/"Util.py""
     echo. >> "../%projectName1%/controller/"%name%Controller.py""
     echo. >> "../%projectName1%/controller/"%name%Controller.py""
-    echo %lowerName% = Blueprint('%name%Controller', __name__, url_prefix='/api')>> "../%projectName1%/controller/"%name%Controller.py""
+    echo %lowerName% = Blueprint('%name%Controller', __name__, url_prefix=Util.getURL('%lowerName%'))>> "../%projectName1%/controller/"%name%Controller.py""
     echo %lowerName%Repository = %name%Repository(mysql)>> "../%projectName1%/controller/"%name%Controller.py""
     echo %lowerName%Service = %name%Service(mysql, %lowerName%Repository)>> "../%projectName1%/controller/"%name%Controller.py""
     GOTO START
@@ -111,13 +112,14 @@ IF %choice%==create-project GOTO PROJECT
     BREAK > Util.py 100
     echo import datetime >> Util.py
     echo from flask import jsonify >> Util.py
+    echo from resources.rest_service import config >> Util.py
     echo. >> Util.py
     echo. >> Util.py
     echo class Util(): >> Util.py
     echo. >> Util.py
-    echo     RESOURCE_DOESNT_EXIST = "The resource you are trying to get, doesn't exist"
-    echo     NOT_ENOUGH_PERMISSIONS = "You don't have enough permissions to do this"
-    echo     RESOURCE_ALREADY_EXISTS = "The resource you are trying to add, already exists"
+    echo     RESOURCE_DOESNT_EXIST = "The resource you are trying to get, doesn't exist" >> Util.py
+    echo     NOT_ENOUGH_PERMISSIONS = "You don't have enough permissions to do this" >> Util.py
+    echo     RESOURCE_ALREADY_EXISTS = "The resource you are trying to add, already exists" >> Util.py
     echo. >> Util.py
     echo     @classmethod >> Util.py
     echo     def createList(cls, elements): >> Util.py
@@ -134,7 +136,7 @@ IF %choice%==create-project GOTO PROJECT
     echo             "param": param, >> Util.py
     echo             "code": 200 >> Util.py
     echo         }) >> Util.py
-    echo.
+    echo. >> Util.py
     echo     @classmethod >> Util.py
     echo     def createWrongResponse(cls, success, error, code): >> Util.py
     echo         return jsonify({ >> Util.py
@@ -142,6 +144,12 @@ IF %choice%==create-project GOTO PROJECT
     echo             "success": success, >> Util.py
     echo             "error": error, >> Util.py
     echo             "code": code >> Util.py
+    echo         }) >> Util.py
+    echo. >> Util.py
+    echo	 @classmethod >> Util.py
+    echo	 def getURL(cls, controllerName): >> Util.py
+    echo	     return '/api/v_' + config['version'].replace('.', '_') + '/' + controllerName >> Util.py
+    echo. >> Util.py
 
 
     echo [DONE] The project has been created
